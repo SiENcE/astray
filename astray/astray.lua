@@ -1,3 +1,26 @@
+--[[
+Copyright (c) <''2014''> <''Florian Fischer''>
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+   1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+
+   2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+
+   3. This notice may not be removed or altered from any source
+   distribution.
+]]--
+
 -- Globals
 DirectionType = { North = 0, South = 1, East = 2, West = 3 }
 SideType = { Empty=1, Wall=2, Door=3 }
@@ -143,12 +166,11 @@ function Astray:RemoveDeadEnds( dungeon )
 	end
 end
 
--- TODO: random next instance
 function Astray:ShouldRemoveDeadend()
 	return math.random(1, 99) < self.deadEndRemovalModifier
 end
 
-function Astray:ExpandToTiles( dungeon, tiles )
+function Astray:CellToTiles( dungeon, tiles )
 	local tile = tiles
 	if not tile then
 		tile = {}
@@ -175,8 +197,8 @@ function Astray:ExpandToTiles( dungeon, tiles )
 		minPoint = Point:new(room:getBounds().X * 2 + 1, room:getBounds().Y * 2 + 1)
 		maxPoint = Point:new( (room:getBounds().X+room:getBounds().Width) * 2, (room:getBounds().Y+room:getBounds().Height) * 2 )
 		
-		print("Roomsize=", room:getBounds().Width, room:getBounds().Height)
-		print("Real Roomsize=", maxPoint.X-minPoint.X, maxPoint.Y-minPoint.Y)
+--		print("Roomsize=", room:getBounds().Width, room:getBounds().Height)
+--		print("Real Roomsize=", maxPoint.X-minPoint.X, maxPoint.Y-minPoint.Y)
 
 		-- Fill the room in tile space with an empty value
 		for i = minPoint.X, maxPoint.X-1 do
