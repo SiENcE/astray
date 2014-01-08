@@ -12,16 +12,33 @@ function drawdungeon(tiles, width, height)
 		end
 		print(line)
 	end
+	print('')
 end
 
 function love.load()
 	print('Astay Sample')
 --	local generator = astray.Astray:new( 25, 25, 30, 70, 80, astray.RoomGenerator:new(8, 3, 6, 3, 6) )
 --	local generator = astray.Astray:new( 5, 5, 1, 15, 5, astray.RoomGenerator:new(1, 1, 2, 1, 2) )
-	local generator = astray.Astray:new( 4, 4, 5, 25, 90, astray.RoomGenerator:new(1, 2, 2, 2, 2) )
-	local dungeon = generator:Generate()
+	local generator = astray.Astray:new( 20, 10, 15, 70, 80, astray.RoomGenerator:new(4, 2, 6, 2, 6) )
+--	local dungeon = generator:Generate()
+--	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
+--	print("Mazesize=", #tiles+1, #tiles[1]+1 )
+--	drawdungeon(tiles, #tiles, #tiles[1] )
+	
+	local dungeon = generator:GenerateDungeon()
 	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
-	print("Mazesize=", #tiles+1, #tiles[1]+1 )
+	drawdungeon(tiles, #tiles, #tiles[1] )
+	generator:GenerateSparsifyMaze(dungeon)
+	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
+	drawdungeon(tiles, #tiles, #tiles[1] )
+	generator:GenerateRemoveDeadEnds(dungeon)
+	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
+	drawdungeon(tiles, #tiles, #tiles[1] )
+	generator:GeneratePlaceRooms(dungeon)
+	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
+	drawdungeon(tiles, #tiles, #tiles[1] )
+	generator:GeneratePlaceDoors(dungeon)
+	local tiles = generator:CellToTiles(dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
 	drawdungeon(tiles, #tiles, #tiles[1] )
 end
 
