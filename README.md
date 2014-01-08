@@ -1,5 +1,5 @@
-Astray (c) '2014 'Florian Fischer'
-==================================
+Astray
+======
 
 Astray is a lua based maze, room and dungeon generation library for dungeon crawlers and rougelike video games.
 
@@ -11,7 +11,7 @@ Quick Look
     
 	local dungeon = generator:Generate()
     
-	local tiles = generator:CellToTiles( dungeon, {Wall='²', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'} )
+	local tiles = generator:CellToTiles( dungeon )
 	
     for y = 0, #tiles[1] do
         local line = ''
@@ -37,10 +37,10 @@ Specs
 =====
 
 This work mainly based on the following ideas:
-http://dirkkok.wordpress.com/2007/11/21/generating-random-dungeons-part-1/
-http://inkwellideas.com/advice/random-dungeon-generators-reviewed/
-http://thomasbowker.com/2013/08/02/generating-a-dungeon/
-http://www.myth-weavers.com/generate_dungeon.php
+  * http://dirkkok.wordpress.com/2007/11/21/generating-random-dungeons-part-1/
+  * http://inkwellideas.com/advice/random-dungeon-generators-reviewed/
+  * http://thomasbowker.com/2013/08/02/generating-a-dungeon/
+  * http://www.myth-weavers.com/generate_dungeon.php
 
 License
 =======
