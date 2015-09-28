@@ -3,6 +3,12 @@ Astray
 
 Astray is a lua based maze, room and dungeon generation library for dungeon crawlers and rougelike video games.
 
+<p align="center">
+ <a href="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
+  <img border="0" src="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
+ </a>
+</p>
+
 Quick Look
 ==========
     local astray = require('astray')
