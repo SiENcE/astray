@@ -48,6 +48,11 @@ This work mainly based on the following ideas:
   * http://thomasbowker.com/2013/08/02/generating-a-dungeon/
   * http://www.myth-weavers.com/generate_dungeon.php
 
+Copyright
+=========
+
+Copyright (c) <''2014''> <''Florian Fischer''> 
+
 License
 =======
 
