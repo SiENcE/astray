@@ -154,22 +154,9 @@ function RoomGenerator:PlaceDoors( dungeon )
 			if (cellLocation.X == 0) and
 				(dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.West)) and
 				(not hasWestDoor) then
---	print('try-door at=', dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
-	-- check all adjacentCells for walls!!!
---	local targetN = dungeon:GetTargetLocation(dungeonLocation, DirectionType.North)
---	local targetS = dungeon:GetTargetLocation(dungeonLocation, DirectionType.South)
---	local targetE = dungeon:GetTargetLocation(dungeonLocation, DirectionType.East)
---	local targetW = dungeon:GetTargetLocation(dungeonLocation, DirectionType.West)
---	if targetN and targetS and targetE and targetW then
---		if dungeon:getCell(targetN):getWallCount()==4 and
---		   dungeon:getCell(targetS):getWallCount()==4 and
---		   dungeon:getCell(targetE):getWallCount()==4 and
---		   dungeon:getCell(targetW):getWallCount()==4 then
 --					print('West-Door =',dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
 					dungeon:CreateDoor(dungeonLocation, DirectionType.West)
 					hasWestDoor = true
---		end
---	end
 			end
 
 			-- Check if we are on the east boundary of our room
