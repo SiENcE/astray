@@ -18,10 +18,13 @@ end
 function love.load()
 	print('Astay Sample\n')
 	local symbols = {Wall='#', Empty=' ', DoorN='-', DoorS='-', DoorE='|', DoorW='|'}
-
+	
 	print('Automatic\n------------------------------------------\n')
 	-- original setup
-	local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5) )
+	--	width, height, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99)
+	--																	rooms, minWidth, maxWidth, minHeight, maxHeight
+	--local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5) )
+	local generator = astray.Astray:new( 20, 20, 25, 40, 80, astray.RoomGenerator:new(8, 2, 4, 2, 4) )
 	local dungeon = generator:Generate()
 	local tiles = generator:CellToTiles(dungeon, symbols )
 	print("Mazesize=", #tiles+1, #tiles[1]+1 )
