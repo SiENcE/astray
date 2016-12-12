@@ -13,7 +13,11 @@ Quick Look
 ==========
     local astray = require('astray')
 
-    local generator = astray.Astray:new( 25, 25, 30, 70, 80, astray.RoomGenerator:new(8, 3, 6, 3, 6) )
+	-- This maze generator can only generate uneven maps.
+	-- To get a 39x39 maze you need to Input
+	local height, width = 40, 40
+	--	Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
+    local generator = astray.Astray:new( height/2-1, width/2-1, 30, 70, 50, astray.RoomGenerator:new(4, 2, 4, 2, 4) )
     
 	local dungeon = generator:Generate()
     
@@ -22,7 +26,7 @@ Quick Look
     for y = 0, #tiles[1] do
         local line = ''
 		for x = 0, #tiles do
-			line = line .. tiles[x][y]
+			line = line .. tiles[y][x]
 		end
 		print(line)
 	end
