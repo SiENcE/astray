@@ -4,6 +4,12 @@
 
 Astray is a robust Lua library for procedural generation of mazes, rooms, and dungeons. It provides a flexible system for creating diverse layouts suitable for dungeon crawlers, roguelikes, and other games requiring procedural map generation.
 
+<p align="center">
+ <a href="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
+  <img border="0" src="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
+ </a>
+</p>
+
 ## Features
 
 - Procedural maze generation using modified depth-first search
@@ -15,12 +21,6 @@ Astray is a robust Lua library for procedural generation of mazes, rooms, and du
   - Direction change probability
 - ASCII map output with customizable tiles
 - Support for different cell types (corridors, rooms, doors)
-
-<p align="center">
- <a href="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
-  <img border="0" src="https://raw.githubusercontent.com/SiENcE/astray/master/sample.png">
- </a>
-</p>
 
 ## Installation
 
@@ -81,8 +81,8 @@ Astray:new(width, height, changeDirectionMod, sparsenessMod, deadEndRemovalMod, 
 
 | Parameter | Range | Description |
 |-----------|-------|-------------|
-| width | > 0 | Width of the dungeon (will be uneven) |
-| height | > 0 | Height of the dungeon (will be uneven) |
+| width | > 0 | Width of the dungeon in even numbers (map will be uneven) |
+| height | > 0 | Height of the dungeon in even numbers (map will be uneven) |
 | changeDirectionMod | 1-30 | Higher values create more winding corridors |
 | sparsenessMod | 25-70 | Higher values create more open layouts |
 | deadEndRemovalMod | 50-99 | Higher values remove more dead ends |
