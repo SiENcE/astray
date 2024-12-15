@@ -32,18 +32,18 @@ local Cell = require(PATH .. 'cell')
 local Map = class("Map")
 
 function Map:initialize( width, height )
---	print('Map:initialize', width, height)
-	
-	self.cells = {}
-	self.bounds = { X=0, Y=0, Width=width, Height=height }
+    self.cells = {}
+    self.bounds = { X=0, Y=0, Width=width, Height=height }
+    self.cellLocations = {} -- Add cache
 
-	-- Initialize the array of cells
+    -- Initialize cells and cache locations
     for x = 0, self.bounds.Width-1 do
         self.cells[x] = {}
         for y = 0, self.bounds.Height-1 do
-			self.cells[x][y] = Cell:new()
-		end
-	end
+            self.cells[x][y] = Cell:new()
+            table.insert(self.cellLocations, Point:new(x,y))
+        end
+    end
 end
 
 function Map:HasAdjacentCellInDirection( location, direction)
@@ -55,16 +55,12 @@ function Map:HasAdjacentCellInDirection( location, direction)
 
 	-- Check if there is an adjacent cell in the direction
 	if direction == DirectionType.North then
---		print("North", location.Y > 0)
 		return location.Y > 0
 	elseif direction == DirectionType.South then
---		print("South",location.Y < (self:getHeight() - 1))
 		return location.Y < (self:getHeight() - 1)
 	elseif direction == DirectionType.West then
---		print("West",location.X > 0)
 		return location.X > 0
 	elseif direction == DirectionType.East then
---		print("East",location.X < (self:getWidth() - 1))
 		return location.X < (self:getWidth() - 1)
 	else
 		print('ERROR: Map:HasAdjacentCellInDirection')
@@ -95,40 +91,25 @@ end
 ------------------------------------------------------
 
 function Map:getBounds()
---	print('Map:getBounds')
 	return self.bounds
 end
 
--- renamed functions!!
 function Map:getCell( point )
---	print('Map:getCell', point.X, point.Y)
 	return self.cells[point.X][point.Y]
 end
 function Map:setCell( point, value )
---	print('Map:setCell', point.X, point.Y, value)
 	self.cells[point.X][point.Y] = value
 end
 
 function Map:getWidth()
---	print('Map:getWidth')
 	return self.bounds.Width
 end
 function Map:getHeight()
---	print('Map:getHeight')
 	return self.bounds.Height
 end
 
--- TODO: optimizes...do it only once during table initialize!!!!
 function Map:getCellLocations()
---	print('Map:getCellLocations')
-
-	local pointlist = {}
-    for x = 0, self:getWidth()-1 do
-        for y = 0, self:getHeight()-1 do
-			table.insert( pointlist, Point:new(x,y) )
-		end
-	end
-	return pointlist
+    return self.cellLocations
 end
 
 return Map
