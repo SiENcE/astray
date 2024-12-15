@@ -1,5 +1,5 @@
 --[[
-Copyright (c) <''2014''> <''Florian Fischer''>
+Copyright (c) <''2024''> <''Florian Fischer''>
 ]]--
 
 local astray = require('astray')
@@ -48,61 +48,28 @@ function fixTiles( tiles, width, height )
 	return fixed_tiles
 end
 
-function love.load()
-	print('Astay Sample\n')
-	
-	print('Automatic\n------------------------------------------\n')
-	
-	-- This maze generator can only generate uneven maps.
-	-- To get a 39x39 maze you need to Input
-	local height, width = 40, 40
-	--	Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
-    local generator = astray.Astray:new( height/2-1, width/2-1, 30, 70, 50, astray.RoomGenerator:new(4, 2, 4, 2, 4) )
+print('Astay Sample\n')
 
-	-- original setup
-	--local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5) )
-	
-	local dungeon = generator:Generate()
-	--local tiles = generator:CellToTiles(dungeon, symbols)
-	local tiles = generator:CellToTiles(dungeon)
-	-- to alternate between two wall-types
-	updatewalls(tiles, #tiles, #tiles[1] )
-	-- draw on console
-	drawdungeon(tiles, 0, 0, #tiles, #tiles[1] )
-	-- fix Tiles for Lua (no 0 index)
-	local fixed_tiles = fixTiles( tiles, #tiles, #tiles[1] )
-	-- draw on console
-	drawdungeon(fixed_tiles, 1, 1, #fixed_tiles, #fixed_tiles[1] )
+print('Automatic\n------------------------------------------\n')
 
---[[
-	print('\n-----------------------------------------------------\n')
-	-- or manually each step
-	print('Manually\n------------------------------------------\n')
+-- NOTE: This maze generator only accepts even number and can only generate uneven maps!
+-- So when you input 40, 40 you get a -> 39,39 map.
+local height, width = 40, 40
 
---	local generator = astray.Astray:new( 25, 25, 30, 70, 80, astray.RoomGenerator:new(8, 3, 6, 3, 6) )
---	local generator = astray.Astray:new( 5, 5, 1, 15, 5, astray.RoomGenerator:new(1, 1, 2, 1, 2) )
-	local generator = astray.Astray:new( 20, 10, 15, 70, 80, astray.RoomGenerator:new(4, 2, 6, 2, 6) )
+--	Function Header: Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
+local generator = astray.Astray:new( height/2-1, width/2-1, 30, 70, 50, astray.RoomGenerator:new(4, 2, 4, 2, 4) )
 
-	local dungeon = generator:GenerateDungeon()
-	local tiles = generator:CellToTiles(dungeon, symbols )
-	drawdungeon(tiles, #tiles, #tiles[1] )
-	generator:GenerateSparsifyMaze(dungeon)
-	local tiles = generator:CellToTiles(dungeon, symbols )
-	drawdungeon(tiles, #tiles, #tiles[1] )
-	generator:GenerateRemoveDeadEnds(dungeon)
-	local tiles = generator:CellToTiles(dungeon, symbols )
-	drawdungeon(tiles, #tiles, #tiles[1] )
-	generator:GeneratePlaceRooms(dungeon)
-	local tiles = generator:CellToTiles(dungeon, symbols )
-	drawdungeon(tiles, #tiles, #tiles[1] )
-	generator:GeneratePlaceDoors(dungeon)
-	local tiles = generator:CellToTiles(dungeon, symbols )
-	drawdungeon(tiles, #tiles, #tiles[1] )
-]]--
-end
+-- original setup
+--local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5) )
 
-function love.draw()
-end
-
-function love.update(dt)
-end
+local dungeon = generator:Generate()
+--local tiles = generator:CellToTiles(dungeon, symbols)
+local tiles = generator:CellToTiles(dungeon)
+-- to alternate between two wall-types
+updatewalls(tiles, #tiles, #tiles[1] )
+-- draw on console
+drawdungeon(tiles, 0, 0, #tiles, #tiles[1] )
+-- fix array index to 1 (instead of 0)
+local fixed_tiles = fixTiles( tiles, #tiles, #tiles[1] )
+-- draw on console
+drawdungeon(fixed_tiles, 1, 1, #fixed_tiles, #fixed_tiles[1] )
