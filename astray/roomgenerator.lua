@@ -32,7 +32,6 @@ local Room = require(PATH .. 'room')
 local RoomGenerator = class("RoomGenerator")
 
 function RoomGenerator:initialize(noOfRoomsToPlace, minRoomWidth, maxRoomWidth, minRoomHeight, maxRoomHeight)
---	print('RoomGenerator:initialize')
 	self.noOfRoomsToPlace = noOfRoomsToPlace or 10
 	self.minRoomWidth = minRoomWidth or 1
 	self.maxRoomWidth = maxRoomWidth or 6
@@ -40,7 +39,6 @@ function RoomGenerator:initialize(noOfRoomsToPlace, minRoomWidth, maxRoomWidth, 
 	self.maxRoomHeight = maxRoomHeight or 6
 end
 
--- TODO: Instance.Next
 function RoomGenerator:CreateRoom()
 	local room = Room:new( math.random(self.minRoomWidth, self.maxRoomWidth), math.random(self.minRoomHeight, self.maxRoomHeight) )
 
@@ -74,7 +72,7 @@ end
 
 function RoomGenerator:CalculateRoomPlacementScore( location, room, dungeon )
 	-- Check if the room at the given location will fit inside the bounds of the map
-	if Util:rectbound( {X=location.X, Y=location.Y, Width=room:getWidth() + 1, Height=room:getHeight() + 1}, dungeon:getBounds() ) then
+	if Util:rectbound( {X=location.X, Y=location.Y, Width=room:getWidth(), Height=room:getHeight()}, dungeon:getBounds() ) then
 		local roomPlacementScore = 0
 
 		-- Loop for each cell in the room
@@ -154,7 +152,6 @@ function RoomGenerator:PlaceDoors( dungeon )
 			if (cellLocation.X == 0) and
 				(dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.West)) and
 				(not hasWestDoor) then
---					print('West-Door =',dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
 					dungeon:CreateDoor(dungeonLocation, DirectionType.West)
 					hasWestDoor = true
 			end
@@ -164,7 +161,6 @@ function RoomGenerator:PlaceDoors( dungeon )
 			if (cellLocation.X == room:getWidth() - 1) and
 				(dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.East)) and
 				(not hasEastDoor) then
---					print('East-Door =',dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
 					dungeon:CreateDoor(dungeonLocation, DirectionType.East)
 					hasEastDoor = true
 			end
@@ -174,7 +170,6 @@ function RoomGenerator:PlaceDoors( dungeon )
 			if (cellLocation.Y == 0) and
 				(dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.North)) and
 				(not hasNorthDoor) then
---					print('North-Door =',dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
 					dungeon:CreateDoor(dungeonLocation, DirectionType.North)
 					hasNorthDoor = true
 			end
@@ -184,7 +179,6 @@ function RoomGenerator:PlaceDoors( dungeon )
 			if (cellLocation.Y == room:getHeight() - 1) and
 				(dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.South)) and
 				(not hasSouthDoor) then
---					print('South-Door =',dungeonLocation.X*2+1, dungeonLocation.Y*2+1)
 					dungeon:CreateDoor(dungeonLocation, DirectionType.South)
 					hasSouthDoor = true
 			end

@@ -1,5 +1,5 @@
 --[[
-Copyright (c) <''2014''> <''Florian Fischer''>
+Copyright (c) <''2024''> <''Florian Fischer''>
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -70,12 +70,7 @@ function Astray:GenerateDungeon()
 	self:CreateDenseMaze(dungeon)
 	return dungeon
 end
-function Astray:GenerateSparsifyMaze(dungeon)
-	self:SparsifyMaze(dungeon)
-end
-function Astray:GenerateRemoveDeadEnds(dungeon)
-	self:RemoveDeadEnds(dungeon)
-end
+
 function Astray:GeneratePlaceRooms(dungeon)
 	self.roomGenerator:PlaceRooms(dungeon)
 end
@@ -90,10 +85,6 @@ function Astray:CreateDenseMaze( dungeon )
 	while (not dungeon:AllCellsAreVisited() ) do
 		local directionPicker = DirectionPicker:new(previousDirection, self.changeDirectionModifier)
 		local direction = directionPicker:GetNextDirection()
-		
---		print(currentLocation.X, currentLocation.Y)
---		print("Map", not dungeon:HasAdjacentCellInDirection(currentLocation, direction))
---		print("Dungeon", dungeon:AdjacentCellInDirectionIsVisited(currentLocation, direction))
 		
 		while (not dungeon:HasAdjacentCellInDirection(currentLocation, direction)) or dungeon:AdjacentCellInDirectionIsVisited(currentLocation, direction) do
 			if directionPicker:HasNextDirection() then
@@ -111,33 +102,51 @@ function Astray:CreateDenseMaze( dungeon )
 	end
 end
 
-function Astray:SparsifyMaze( dungeon )
-	-- Calculate the number of cells to remove as a percentage of the total number of cells in the dungeon
-	local noOfDeadEndCellsToRemove = math.ceil((self.sparsenessModifier / 100) * (dungeon:getWidth() * dungeon:getHeight()))
-
---	print('noOfDeadEndCellsToRemove=',noOfDeadEndCellsToRemove)
-
-	local i = 0
-	local quit = false
-
-	while (i < noOfDeadEndCellsToRemove) do
-		local deadEndCellList = dungeon:DeadEndCellLocations() -- Get a new enumerator
-		if #deadEndCellList < 2 then break end -- No new items exist so break out of loop
-		
-		for key,point in pairs(deadEndCellList) do
-			local cell = dungeon:getCell(point)
-			local direction = cell:CalculateDeadEndCorridorDirection()
---			print(i, point.X, point.Y, cell:getIsDeadEnd(), direction)
-			
-			dungeon:CreateWall( point, direction )
-			dungeon:getCell(point):setIsCorridor(false)
-			
-			i=i+1
-			if i >= noOfDeadEndCellsToRemove then quit=true break end
-		end
-
-		if quit then break end
-	end
+function Astray:SparsifyMaze(dungeon)
+    -- Calculate the target number of cells to remove
+    local noOfDeadEndCellsToRemove = math.ceil((self.sparsenessModifier / 100) * (dungeon:getWidth() * dungeon:getHeight()))
+    
+    -- Initialize counters
+    local cellsRemoved = 0
+    local maxIterations = dungeon:getWidth() * dungeon:getHeight() -- Maximum possible iterations
+    local iterations = 0
+    
+    while cellsRemoved < noOfDeadEndCellsToRemove do
+        -- Get current dead end cells
+        local deadEndCellList = dungeon:DeadEndCellLocations()
+        
+        -- Break if no more dead ends or max iterations reached
+        if #deadEndCellList < 2 or iterations >= maxIterations then
+            break
+        end
+        
+        -- Process each dead end
+        for _, point in pairs(deadEndCellList) do
+            local cell = dungeon:getCell(point)
+            local direction = cell:CalculateDeadEndCorridorDirection()
+            
+            -- Remove the dead end
+            dungeon:CreateWall(point, direction)
+            dungeon:getCell(point):setIsCorridor(false)
+            
+            -- Update counter
+            cellsRemoved = cellsRemoved + 1
+            
+            -- Check if we've reached our target
+            if cellsRemoved >= noOfDeadEndCellsToRemove then
+                break
+            end
+        end
+        
+        -- Increment iteration counter
+        iterations = iterations + 1
+    end
+    
+    -- Log completion statistics if needed
+    if iterations >= maxIterations then
+        print(string.format("WARNING: SparsifyMaze reached maximum iterations. Removed %d of %d planned cells.", 
+                          cellsRemoved, noOfDeadEndCellsToRemove))
+    end
 end
 
 function Astray:RemoveDeadEnds( dungeon )
@@ -145,7 +154,6 @@ function Astray:RemoveDeadEnds( dungeon )
 	for key,deadEndLocation in pairs( deadEndCellList ) do
 		if self:ShouldRemoveDeadend() then
 			local currentLocation = deadEndLocation
---			print('removeDeadEnd = ',currentLocation.X, currentLocation.Y)
 				
 			repeat
 				local directionPicker = DirectionPicker:new( dungeon:getCell(currentLocation):CalculateDeadEndCorridorDirection(), 100)
@@ -196,9 +204,6 @@ function Astray:CellToTiles( dungeon, tiles )
 		-- Get the room min and max location in tile coordinates
 		minPoint = Point:new(room:getBounds().X * 2 + 1, room:getBounds().Y * 2 + 1)
 		maxPoint = Point:new( (room:getBounds().X+room:getBounds().Width) * 2, (room:getBounds().Y+room:getBounds().Height) * 2 )
-		
---		print("Roomsize=", room:getBounds().Width, room:getBounds().Height)
---		print("Real Roomsize=", maxPoint.X-minPoint.X, maxPoint.Y-minPoint.Y)
 
 		-- Fill the room in tile space with an empty value
 		for i = minPoint.X, maxPoint.X-1 do

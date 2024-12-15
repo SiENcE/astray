@@ -87,7 +87,6 @@ function Cell:setWestSide( westSide )
 end
 
 function Cell:getIsDeadEnd()
---	print("Wallcount=", self:getWallCount() )
 	return self:getWallCount() == 3
 end
 

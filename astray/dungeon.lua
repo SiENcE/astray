@@ -32,7 +32,6 @@ local Map = require(PATH .. 'map')
 local Dungeon = class("Dungeon", Map)
 
 function Dungeon:initialize( width, height )
---	print('Dungeon:initialize')
 	Map.initialize(self, width, height) -- invoking the superclass' initializer
 
 	self.visitedCells = {}
@@ -50,7 +49,6 @@ function Dungeon:FlagAllCellsAsUnvisited()
 end
 
 -- return point
--- TODO: proof the -1 and 0 !!!!!!!!!!!!!
 function Dungeon:PickRandomCellAndFlagItAsVisited()
 	local randomLocation = Point:new(math.random(0,self:getWidth() - 1), math.random(0,self:getHeight() - 1))
 	self:FlagCellAsVisited(randomLocation)
@@ -65,7 +63,6 @@ function Dungeon:AdjacentCellInDirectionIsVisited( location, direction )
 		return false
 	end
 	
-	-- TODO optimize!!!
 	if direction == DirectionType.North then
 		return self:getCell(target):getVisited()
 	elseif direction == DirectionType.West then
@@ -88,7 +85,6 @@ function Dungeon:AdjacentCellInDirectionIsCorridor( location, direction )
 		return false
 	end
 
-	-- TODO optimize!!!
 	if direction == DirectionType.North then
 		return self:getCell(target):getIsCorridor()
 	elseif direction == DirectionType.West then
@@ -125,14 +121,9 @@ function Dungeon:GetRandomVisitedCell( location )
 
 	local index = math.random(#self.visitedCells-1)
 
---	print("self.visitedCells", index)
---	print(self.visitedCells[index].X, location.X, self.visitedCells[index].Y, location.Y )
-
 	-- Loop while the current cell is the visited cell
 	while (self.visitedCells[index].X == location.X and self.visitedCells[index].Y == location.Y) do
 		index = math.random(#self.visitedCells - 1)
---		print("self.visitedCells", index)
---		print(self.visitedCells[index].X, location.X, self.visitedCells[index].Y, location.Y )
 	end
 	
 	return self.visitedCells[index]
@@ -140,7 +131,6 @@ end
 
 -- return point
 function Dungeon:CreateCorridor( location, direction )
---	print('Dungeon:CreateCorridor')
 	local targetLocation = self:CreateSide(location, direction, SideType.Empty)
 	
 	self:getCell(location):setIsCorridor(true)	-- Set current location to corridor
@@ -152,19 +142,16 @@ end
 
 -- return point
 function Dungeon:CreateWall( location, direction )
---	print('Dungeon:CreateWall')
 	return self:CreateSide(location, direction, SideType.Wall)
 end
 
 -- return point
 function Dungeon:CreateDoor( location, direction )
---	print('Dungeon:CreateDoor')
 	return self:CreateSide(location, direction, SideType.Door)
 end
 
 -- return point
 function Dungeon:CreateSide( location, direction, sideType )
---	print('Dungeon:CreateSide')
 	local target = self:GetTargetLocation(location, direction)
 
 	if (target == nil) then
@@ -194,18 +181,14 @@ end
 
 -- return boolean
 function Dungeon:AllCellsAreVisited()
---	print('Dungeon:AllCellsAreVisited', #self.visitedCells, self:getWidth() * self:getHeight())
 	return #self.visitedCells == ( self:getWidth() * self:getHeight() )
 end
 
 -- IEnumerable<Point>
 function Dungeon:DeadEndCellLocations()
---	print('Dungeon:DeadEndCellLocations')
-	
 	local deadEndpointList = {}
 	for key,point in pairs( self:getCellLocations() ) do
 		if self:getCell(point):getIsDeadEnd() then
---			print('point=',point.X,point.Y,'deadend=',self:getCell(point):getIsDeadEnd())
 			table.insert(deadEndpointList, point)
 		end
 	end
@@ -214,12 +197,9 @@ function Dungeon:DeadEndCellLocations()
 end
 
 function Dungeon:CorridorCellLocations()
---	print('Dungeon:CorridorCellLocations')
-	
 	local corridorPointList = {}
 	for key,point in pairs( self:getCellLocations() ) do
 		if self:getCell(point):getIsCorridor() then
---			print('point=',point.X,point.Y,'isCorridor=',self:getCell(point):getIsCorridor())
 			table.insert(corridorPointList, point)
 		end
 	end

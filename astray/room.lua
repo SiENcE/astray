@@ -31,7 +31,6 @@ local Map = require(PATH .. 'map')
 local Room = class("Room", Map)
 
 function Room:initialize( width, height )
---	print('Room:initialize')
 	Map.initialize(self, width, height) -- invoking the superclass' initializer
 end
 

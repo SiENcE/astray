@@ -29,71 +29,65 @@ local Util = require(PATH .. 'util')
 -- Class
 local DirectionPicker = class("DirectionPicker")
 
-function DirectionPicker:initialize( previousDirection, changeDirectionModifier )
---	print('DirectionPicker:initialize')
-	self.directionsPicked = {}
-	
-	self.previousDirection = previousDirection
-	self.changeDirectionModifier = changeDirectionModifier
+function DirectionPicker:initialize(previousDirection, changeDirectionModifier)
+    -- Initialize all available directions
+    self.availableDirections = {
+        DirectionType.North,
+        DirectionType.South,
+        DirectionType.East,
+        DirectionType.West
+    }
+    self.previousDirection = previousDirection
+    self.changeDirectionModifier = changeDirectionModifier
+    self.directionsPicked = {}
 end
 
--- return DirectionType
 function DirectionPicker:PickDifferentDirection()
---	print('DirectionPicker:PickDifferentDirection')
-
-	local directionPicked = math.random(0,3)
-	while (directionPicked == self.previousDirection) and (#self.directionsPicked < 3) do
-		directionPicked = math.random(0,3)
-	end
-
-	return directionPicked
+    -- Filter out previously picked directions and the current direction
+    local validDirections = {}
+    for _, dir in ipairs(self.availableDirections) do
+        if dir ~= self.previousDirection and not Util:tablecontains(self.directionsPicked, dir) then
+            table.insert(validDirections, dir)
+        end
+    end
+    
+    -- If no valid directions, return any unpicked direction
+    if #validDirections == 0 then
+        for _, dir in ipairs(self.availableDirections) do
+            if not Util:tablecontains(self.directionsPicked, dir) then
+                return dir
+            end
+        end
+        -- If all directions are picked, return the previous direction as last resort
+        return self.previousDirection
+    end
+    
+    -- Return random valid direction
+    return validDirections[math.random(1, #validDirections)]
 end
 
--- return DirectionType
 function DirectionPicker:GetNextDirection()
---	print('DirectionPicker:GetNextDirection')
-	if (not self:HasNextDirection() ) then
-		print('No directions available')
-		return nil
-	end
+    if not self:HasNextDirection() then
+        return nil
+    end
 
-	local directionPicked = nil
-	local changeDir = self:MustChangeDirection()
-	if changeDir then
-		directionPicked = self:PickDifferentDirection()
-	else
-		directionPicked = self.previousDirection
-	end
-	while Util:tablecontains( self.directionsPicked, directionPicked) do
-		local changeDir = self:MustChangeDirection()
-		if changeDir then
-			directionPicked = self:PickDifferentDirection()
-		else
-			directionPicked = self.previousDirection
-		end
-	end
+    local directionPicked
+    if self:MustChangeDirection() then
+        directionPicked = self:PickDifferentDirection()
+    else
+        directionPicked = self.previousDirection
+    end
 
-	table.insert( self.directionsPicked, directionPicked)
---	print( "tablesize=", #self.directionsPicked )
-	
-	return directionPicked
+    table.insert(self.directionsPicked, directionPicked)
+    return directionPicked
 end
 
-------------------------------------------------------
--- helper functions
-------------------------------------------------------
--- return boolean
 function DirectionPicker:HasNextDirection()
---	print('DirectionPicker:HasNextDirection count=',#self.directionsPicked)
-	return (#self.directionsPicked < 4)
+    return #self.directionsPicked < 4
 end
 
--- return boolean
 function DirectionPicker:MustChangeDirection()
-	-- changeDirectionModifier of 100 will always change direction
-	-- value of 0 will never change direction
---	print('DirectionPicker:MustChangeDirection count=', #self.directionsPicked, ' or=',self.changeDirectionModifier > math.random(0, 99))
-	return ((#self.directionsPicked > 0) or (self.changeDirectionModifier > math.random(0, 99)))
+    return (#self.directionsPicked > 0) or (self.changeDirectionModifier > math.random(0, 99))
 end
 
 return DirectionPicker
