@@ -119,13 +119,18 @@ function Dungeon:GetRandomVisitedCell( location )
 		return nil
 	end
 
-	local index = math.random(#self.visitedCells-1)
-
-	-- Loop while the current cell is the visited cell
-	while (self.visitedCells[index].X == location.X and self.visitedCells[index].Y == location.Y) do
-		index = math.random(#self.visitedCells - 1)
+	-- With only one visited cell there is no other cell to choose from
+	if (#self.visitedCells == 1) then
+		return self.visitedCells[1]
 	end
-	
+
+	local index = math.random(#self.visitedCells)
+
+	-- Loop while the current cell is the passed in location
+	while (self.visitedCells[index].X == location.X and self.visitedCells[index].Y == location.Y) do
+		index = math.random(#self.visitedCells)
+	end
+
 	return self.visitedCells[index]
 end
 

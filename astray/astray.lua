@@ -34,14 +34,20 @@ local RoomGenerator = require(PATH .. 'roomgenerator')
 local Dungeon = require(PATH .. 'dungeon')
 local DirectionPicker = require(PATH .. 'directionpicker')
 
+-- Seed the RNG once when the library is loaded so maps differ between runs.
+-- Pass a seed to Astray:new (see below) to get reproducible maps instead.
+math.randomseed(os.time())
+math.random(); math.random(); math.random()
+
 -- Class
 local Astray = class("Astray")
 
-function Astray:initialize( width, height, changeDirectionModifier, sparsenessModifier, deadEndRemovalModifier, roomGenerator)
---	print('Astray:initialize')
-	math.randomseed(os.time())
-	math.random(); math.random(); math.random()
-	
+-- seed is optional: pass a number to generate a reproducible dungeon.
+function Astray:initialize( width, height, changeDirectionModifier, sparsenessModifier, deadEndRemovalModifier, roomGenerator, seed)
+	if seed ~= nil then
+		math.randomseed(seed)
+	end
+
 	self.width = width or 25
 	self.height = height or 25
 	self.changeDirectionModifier = changeDirectionModifier or 30
@@ -178,22 +184,33 @@ function Astray:ShouldRemoveDeadend()
 	return math.random(1, 99) < self.deadEndRemovalModifier
 end
 
-function Astray:CellToTiles( dungeon, tiles )
+-- targetWidth/targetHeight are optional. The rendered grid is a cell+wall
+-- layout, so its natural size is always odd: width*2 + 1 tiles per axis.
+-- Passing a target pads the grid with wall tiles up to that exact size
+-- (e.g. an even 40x40). Targets smaller than the natural size are ignored,
+-- because cropping would expose cell interiors and leave the maze unsealed.
+function Astray:CellToTiles( dungeon, tiles, targetWidth, targetHeight )
 	local tile = tiles
 	if not tile then
 		tile = {}
-		tile.Wall = '²'
+		tile.Wall = 'â–“'
 		tile.Empty = ' '
-		tile.DoorN = '|'
-		tile.DoorS = '|'
-		tile.DoorE = '-'
-		tile.DoorW = '-'
+		-- doors are drawn as a bar *across* the opening: N/S passages are
+		-- vertical so they use '-', E/W passages are horizontal so they use '|'
+		tile.DoorN = '-'
+		tile.DoorS = '-'
+		tile.DoorE = '|'
+		tile.DoorW = '|'
 	end
-	
+
+	-- Highest tile index per axis: at least the natural size, more if padding
+	local maxX = math.max(dungeon:getWidth()*2,  (targetWidth  or 0) - 1)
+	local maxY = math.max(dungeon:getHeight()*2, (targetHeight or 0) - 1)
+
 	local expanded = {}
-    for x = 0, dungeon:getWidth()*2 do
+    for x = 0, maxX do
         expanded[x] = {}
-        for y = 0, dungeon:getHeight()*2  do
+        for y = 0, maxY do
 			expanded[x][y] = tile.Wall
 		end
 	end

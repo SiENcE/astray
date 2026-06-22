@@ -76,7 +76,7 @@ end
 ### Astray Constructor Parameters
 
 ```lua
-Astray:new(width, height, changeDirectionMod, sparsenessMod, deadEndRemovalMod, roomGenerator)
+Astray:new(width, height, changeDirectionMod, sparsenessMod, deadEndRemovalMod, roomGenerator, seed)
 ```
 
 | Parameter | Range | Description |
@@ -84,8 +84,10 @@ Astray:new(width, height, changeDirectionMod, sparsenessMod, deadEndRemovalMod, 
 | width | > 0 | Width of the dungeon in even numbers (map will be uneven) |
 | height | > 0 | Height of the dungeon in even numbers (map will be uneven) |
 | changeDirectionMod | 1-30 | Higher values create more winding corridors |
-| sparsenessMod | 25-70 | Higher values create more open layouts |
+| sparsenessMod | 25-70 | Higher values create sparser layouts (fewer corridors, larger wall regions) |
 | deadEndRemovalMod | 50-99 | Higher values remove more dead ends |
+| roomGenerator | — | A `RoomGenerator` instance (see below) |
+| seed | optional | Pass a number for a reproducible dungeon; omit for a random one each run |
 
 ### Room Generator Parameters
 
@@ -109,14 +111,37 @@ You can customize the appearance of generated dungeons by providing a tile mappi
 local symbols = {
     Wall = '#',
     Empty = ' ',
-    DoorN = '|',
-    DoorS = '|',
-    DoorE = '-',
-    DoorW = '-'
+    DoorN = '-',  -- north/south doors sit in horizontal walls
+    DoorS = '-',
+    DoorE = '|',  -- east/west doors sit in vertical walls
+    DoorW = '|'
 }
 
 local tiles = generator:CellToTiles(dungeon, symbols)
 ```
+
+## Map Size
+
+A maze is a grid of cells separated by walls, so `CellToTiles` produces a grid
+of `cells * 2 + 1` tiles per axis — always an **odd** number. With
+`cells = size/2 - 1`, the natural output lands one tile short of an even target
+(e.g. `40` → `39`).
+
+To get an exact size, pass the desired width and height to `CellToTiles`. It
+pads the grid with wall tiles up to that size, keeping the maze sealed:
+
+```lua
+local width, height = 40, 40
+local generator = astray.Astray:new(width/2-1, height/2-1, 30, 70, 50,
+    astray.RoomGenerator:new(4, 2, 4, 2, 4))
+
+-- Pad the natural 39x39 grid up to an exact 40x40
+local tiles = generator:CellToTiles(dungeon, symbols, width, height)
+```
+
+Targets smaller than the natural size are ignored — cropping would expose cell
+interiors and leave the maze unsealed. Omit the target arguments to keep the
+natural odd size.
 
 ## Example Output
 

@@ -39,27 +39,27 @@ function Room:InitializeRoomCells()
 		local cell = Cell:new()
 		
 		if (location.X == self.bounds.X) then
-			cell.WestSide = SideType.Wall
+			cell:setWestSide( SideType.Wall )
 		else
-			cell.WestSide = SideType.Empty
+			cell:setWestSide( SideType.Empty )
 		end
-		
+
 		if (location.X == self.bounds.Width - 1) then
-			cell.EastSide = SideType.Wall
+			cell:setEastSide( SideType.Wall )
 		else
-			cell.EastSide = SideType.Empty
+			cell:setEastSide( SideType.Empty )
 		end
-		
+
 		if (location.Y == self.bounds.Y) then
-			cell.NorthSide = SideType.Wall
+			cell:setNorthSide( SideType.Wall )
 		else
-			cell.NorthSide = SideType.Empty
+			cell:setNorthSide( SideType.Empty )
 		end
-		
+
 		if (location.Y == self.bounds.Height - 1) then
-			cell.SouthSide = SideType.Wall
+			cell:setSouthSide( SideType.Wall )
 		else
-			cell.SouthSide = SideType.Empty
+			cell:setSouthSide( SideType.Empty )
 		end
 
 		self:setCell( location, cell )
